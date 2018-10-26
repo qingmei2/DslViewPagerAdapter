@@ -3,42 +3,47 @@ package com.github.qingmei2.dsladapter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.PagerAdapter
+import android.view.ViewGroup
 
-class DslFragmentPagerAdapter private constructor(
-        private val fragmentManager: FragmentManager,
-        private val fragments: List<Fragment>,
-        private val currentItem: Int
-) : FragmentPagerAdapter(fragmentManager) {
+class DslFragmentPagerAdapter internal constructor(
+        private val fragmentManager: () -> FragmentManager,
+        private val fragments: () -> List<Fragment>,
+        private val currentItem: () -> Int
+) : FragmentPagerAdapter(fragmentManager()) {
 
-    internal constructor(fragmentManager: FragmentManager, builder: Builder) : this(
-            fragmentManager,
-            builder.fragments(),
-            builder.currentItem()
-    )
+    override fun getItem(index: Int): Fragment = fragments()[index]
 
-    override fun getItem(index: Int): Fragment = fragments[index]
+    override fun getCount(): Int = fragments().size
 
-    override fun getCount(): Int = fragments.size
-
-    companion object {
-
-        fun build(fragmentManager: FragmentManager, supplier: Builder.() -> Unit): DslFragmentPagerAdapter =
-                Builder(fragmentManager, supplier).build()
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        var fragment = super.instantiateItem(container, position) as Fragment
+        if (fragment != getItem(position)) {
+            val ft = fragmentManager().beginTransaction()
+            ft.remove(fragment)
+            fragment = getItem(position)
+            ft.add(container.id, fragment, fragment.tag)
+            ft.attach(fragment)
+            ft.commitAllowingStateLoss()
+        }
+        return fragment
     }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return PagerAdapter.POSITION_NONE
+    }
+
+    companion object
 }
 
-class Builder(private val fragmentManager: FragmentManager, supplier: Builder.() -> Unit) {
+fun DslFragmentPagerAdapter.Companion.builder(fragmentManager: () -> FragmentManager,
+                                              fragments: () -> List<Fragment> = { listOf() },
+                                              defaultItem: () -> Int = { DEFAULT_CURRENT_ITEM }
+): DslFragmentPagerAdapter {
 
-    var fragments: () -> List<Fragment> = { listOf() }
-
-    var currentItem: () -> Int = { DEFAULT_CURRENT_ITEM }
-
-    init {
-        supplier()
-    }
-
-    fun build(): DslFragmentPagerAdapter =
-            DslFragmentPagerAdapter(fragmentManager, this)
+    return DslFragmentPagerAdapter(fragmentManager,
+            fragments,
+            defaultItem)
 }
 
 const val DEFAULT_CURRENT_ITEM = 0

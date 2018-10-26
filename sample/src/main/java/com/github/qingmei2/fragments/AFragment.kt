@@ -18,6 +18,22 @@ class AFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        textView.text = "AFragment"
+
+        arguments?.apply {
+            textView.text = getString(DISPLAY_TEXT_TAG)
+        }
+    }
+
+    companion object {
+
+        private const val DISPLAY_TEXT_TAG = "DISPLAY_TEXT_TAG"
+
+        fun newInstance(display: String = "AFragment"): Fragment {
+            val bundle = Bundle()
+            bundle.putString(DISPLAY_TEXT_TAG, display)
+            return AFragment().apply {
+                arguments = bundle
+            }
+        }
     }
 }

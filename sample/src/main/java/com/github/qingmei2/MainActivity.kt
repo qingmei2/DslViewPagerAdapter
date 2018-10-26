@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     var fragments: List<Fragment> =
-            listOf(AFragment.newInstance(), BFragment(), CFragment())
-    
+            listOf(AFragment(), BFragment(), CFragment())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,12 +24,18 @@ class MainActivity : AppCompatActivity() {
             DslFragmentPagerAdapter.builder(
                     fragmentManager = { supportFragmentManager },
                     fragments = { fragments },
-                    defaultItem = { 1 }
+                    defaultItem = { 1 },
+                    recycle = { old, _ ->
+                        when (old) {
+                            is AFragment -> true
+                            else -> false
+                        }
+                    }
             )
         }
 
         btnChange.setOnClickListener {
-            fragments = listOf(AFragment.newInstance("AFragment Changed"), BFragment(), CFragment())
+            fragments = listOf(AFragment(), BFragment(), CFragment())   // new Fragment instance
 
             viewPager.adapter?.apply {
                 notifyDataSetChanged()

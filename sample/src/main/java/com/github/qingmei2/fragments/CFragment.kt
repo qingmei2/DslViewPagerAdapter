@@ -18,6 +18,6 @@ class CFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        textView.text = "CFragment"
+        textView.text = this@CFragment.toString()
     }
 }

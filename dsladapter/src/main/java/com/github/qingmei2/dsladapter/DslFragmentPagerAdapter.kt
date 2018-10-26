@@ -9,7 +9,8 @@ import android.view.ViewGroup
 class DslFragmentPagerAdapter internal constructor(
         private val fragmentManager: () -> FragmentManager,
         private val fragments: () -> List<Fragment>,
-        private val currentItem: () -> Int
+        private val currentItem: () -> Int,
+        private val recycleFragment: (Fragment, Int) -> Boolean = { _, _ -> true }
 ) : FragmentPagerAdapter(fragmentManager()) {
 
     override fun getItem(index: Int): Fragment = fragments()[index]
@@ -18,15 +19,20 @@ class DslFragmentPagerAdapter internal constructor(
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         var fragment = super.instantiateItem(container, position) as Fragment
-        if (fragment != getItem(position)) {
-            val ft = fragmentManager().beginTransaction()
-            ft.remove(fragment)
-            fragment = getItem(position)
-            ft.add(container.id, fragment, fragment.tag)
-            ft.attach(fragment)
-            ft.commitAllowingStateLoss()
+        return when (recycleFragment(fragment, position)) {
+            true -> fragment
+            false -> {
+                if (fragment != getItem(position)) {
+                    val ft = fragmentManager().beginTransaction()
+                    ft.remove(fragment)
+                    fragment = getItem(position)
+                    ft.add(container.id, fragment, fragment.tag)
+                    ft.attach(fragment)
+                    ft.commitAllowingStateLoss()
+                }
+                return fragment
+            }
         }
-        return fragment
     }
 
     override fun getItemPosition(`object`: Any): Int {
@@ -36,14 +42,19 @@ class DslFragmentPagerAdapter internal constructor(
     companion object
 }
 
-fun DslFragmentPagerAdapter.Companion.builder(fragmentManager: () -> FragmentManager,
-                                              fragments: () -> List<Fragment> = { listOf() },
-                                              defaultItem: () -> Int = { DEFAULT_CURRENT_ITEM }
+fun DslFragmentPagerAdapter.Companion.builder(
+        fragmentManager: () -> FragmentManager,
+        fragments: () -> List<Fragment> = { listOf() },
+        defaultItem: () -> Int = { DEFAULT_CURRENT_ITEM },
+        recycle: (Fragment, Int) -> Boolean = { _, _ -> true }
 ): DslFragmentPagerAdapter {
 
-    return DslFragmentPagerAdapter(fragmentManager,
+    return DslFragmentPagerAdapter(
+            fragmentManager,
             fragments,
-            defaultItem)
+            defaultItem,
+            recycle
+    )
 }
 
 const val DEFAULT_CURRENT_ITEM = 0

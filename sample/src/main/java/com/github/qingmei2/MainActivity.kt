@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
     var fragments: List<Fragment> =
             listOf(AFragment(), BFragment(), CFragment())
 
+    private lateinit var adapter: DslFragmentPagerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,15 +33,12 @@ class MainActivity : AppCompatActivity() {
                             else -> false
                         }
                     }
-            )
+            ).also { adapter = it }
         }
 
         btnChange.setOnClickListener {
             fragments = listOf(AFragment(), BFragment(), CFragment())   // new Fragment instance
-
-            viewPager.adapter?.apply {
-                notifyDataSetChanged()
-            }
+            adapter.notifyDataSetChanged()
         }
     }
 }

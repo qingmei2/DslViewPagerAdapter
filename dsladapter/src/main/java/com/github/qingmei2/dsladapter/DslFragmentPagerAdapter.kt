@@ -8,35 +8,47 @@ import android.view.ViewGroup
 
 class DslFragmentPagerAdapter internal constructor(
         private val fragmentManager: () -> FragmentManager,
-        private val fragments: () -> List<Fragment>,
+        private val fragmentsProvider: () -> List<Fragment>,
         private val currentItem: () -> Int,
-        private val recycleFragment: (Fragment, Int) -> Boolean = { _, _ -> true }
+        private val recycleFragment: (old: Fragment, index: Int) -> Boolean = { _, _ -> true }
 ) : FragmentPagerAdapter(fragmentManager()) {
 
-    override fun getItem(index: Int): Fragment = fragments()[index]
+    init {
+        getCurrentFragments()
+    }
 
-    override fun getCount(): Int = fragments().size
+    private lateinit var fragments: List<Fragment>
+
+    override fun getItem(index: Int): Fragment = fragments[index]
+
+    override fun getCount(): Int = fragments.size
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        var fragment = super.instantiateItem(container, position) as Fragment
-        return when (recycleFragment(fragment, position)) {
-            true -> fragment
-            false -> {
-                if (fragment != getItem(position)) {
-                    val ft = fragmentManager().beginTransaction()
-                    ft.remove(fragment)
-                    fragment = getItem(position)
-                    ft.add(container.id, fragment, fragment.tag)
-                    ft.attach(fragment)
-                    ft.commitAllowingStateLoss()
-                }
-                return fragment
+        val fragment = super.instantiateItem(container, position) as Fragment
+        val ft = fragmentManager().beginTransaction()
+        return when (fragment != getItem(position) && !recycleFragment(fragment, position)) {
+            true -> getItem(position).apply {
+                ft.remove(fragment)
+                ft.add(container.id, this, tag)
+                ft.attach(this)
+                ft.commitAllowingStateLoss()
+            }
+            false -> fragment.apply {
+                ft.attach(this)
+                ft.commitAllowingStateLoss()
             }
         }
     }
 
-    override fun getItemPosition(`object`: Any): Int {
-        return PagerAdapter.POSITION_NONE
+    override fun getItemPosition(`object`: Any): Int = PagerAdapter.POSITION_NONE
+
+    override fun notifyDataSetChanged() {
+        getCurrentFragments()
+        super.notifyDataSetChanged()
+    }
+
+    private fun getCurrentFragments() {
+        this.fragments = fragmentsProvider()
     }
 
     companion object

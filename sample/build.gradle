@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion build_version.compileSdkVersion
@@ -35,6 +36,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(path: ':dsladapter')
+    implementation project(path: ':dsladapter_databinding')
+
     // support
     implementation libs.support_v7
     implementation libs.recyclerview
@@ -42,5 +47,4 @@ dependencies {
     implementation libs.constraint
 
     implementation libs.kotlin_stdlib
-    implementation project(path: ':dsladapter')
 }

@@ -1,0 +1,9 @@
+<resources>
+
+    <declare-styleable name="android.support.v4.view.ViewPager">
+        <attr name="viewPagerAdapter" format="reference" />
+        <attr name="viewPagerDefaultItem" format="integer" />
+        <attr name="viewPagerPageLimit" format="integer" />
+        <attr name="onViewPagerPageChanged" format="reference" />
+    </declare-styleable>
+</resources>

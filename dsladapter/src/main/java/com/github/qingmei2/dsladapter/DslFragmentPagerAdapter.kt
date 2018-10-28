@@ -4,15 +4,13 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.view.ViewGroup
 
 class DslFragmentPagerAdapter internal constructor(
-        val fragmentManager: () -> FragmentManager,
+        private val fragmentManager: FragmentManager,
         val fragmentsProvider: () -> List<Fragment>,
-        val currentItem: () -> Int,
-        val recycleFragment: (old: Fragment, index: Int) -> Boolean = { _, _ -> true }
-) : FragmentPagerAdapter(fragmentManager()) {
+        val recycleFragment: (old: Fragment, index: Int) -> Boolean = DEFAULT_RECYCLE_FUNC
+) : FragmentPagerAdapter(fragmentManager) {
 
     init {
         getCurrentFragments()
@@ -26,7 +24,7 @@ class DslFragmentPagerAdapter internal constructor(
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val fragment = super.instantiateItem(container, position) as Fragment
-        val ft = fragmentManager().beginTransaction()
+        val ft = fragmentManager.beginTransaction()
         return when (fragment != getItem(position) && !recycleFragment(fragment, position)) {
             true -> getItem(position).apply {
                 ft.remove(fragment)
@@ -56,19 +54,19 @@ class DslFragmentPagerAdapter internal constructor(
         // refresh fragments source
         fragments = fragmentsProvider()
     }
+
+    companion object
 }
 
-fun ViewPager.adapter(
-        fragmentManager: () -> FragmentManager,
-        fragments: () -> List<Fragment> = { listOf() },
-        defaultItem: () -> Int = DEFAULT_CURRENT_ITEM,
-        recycle: (Fragment, Int) -> Boolean = DEFAULT_RECYCLE_FUNC
-) = DslFragmentPagerAdapter(fragmentManager, fragments, defaultItem, recycle)
-        .also {
-            adapter = it
-            currentItem = it.currentItem()
-        }
+fun DslFragmentPagerAdapter.Companion.build(
+        fragmentManager: FragmentManager,
+        fragmentsProvider: () -> List<Fragment>,
+        recycleFragment: (old: Fragment, index: Int) -> Boolean = DEFAULT_RECYCLE_FUNC
+): DslFragmentPagerAdapter =
+        DslFragmentPagerAdapter(
+                fragmentManager,
+                fragmentsProvider,
+                recycleFragment
+        )
 
-private val DEFAULT_RECYCLE_FUNC: (Fragment, Int) -> Boolean = { _, _ -> true }
-
-private val DEFAULT_CURRENT_ITEM: () -> Int = { 0 }
+val DEFAULT_RECYCLE_FUNC: (Fragment, Int) -> Boolean = { _, _ -> true }

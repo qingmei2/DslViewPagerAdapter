@@ -1,10 +1,10 @@
-package com.github.dsladapter.databinding
+package com.github.qingmei2.dslviewpager.databinding
 
 import android.databinding.BindingAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
-import com.github.qingmei2.dsladapter.DEFAULT_CURRENT_ITEM
-import com.github.qingmei2.dsladapter.DEFAULT_OFF_SCREEN_PAGE_LIMIT
+import com.github.qingmei2.dslviewpager.DEFAULT_CURRENT_ITEM
+import com.github.qingmei2.dslviewpager.DEFAULT_OFF_SCREEN_PAGE_LIMIT
 
 @BindingAdapter(
         "viewPagerAdapter",

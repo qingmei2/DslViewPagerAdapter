@@ -1,6 +1,6 @@
 # DslViewPagerAdapter
 
-A simple implementation of ViewPager.
+A simple and light FragmentViewPagerAdapter.
 
 ## Usage
 

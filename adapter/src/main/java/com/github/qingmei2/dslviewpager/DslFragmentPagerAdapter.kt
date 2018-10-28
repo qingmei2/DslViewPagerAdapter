@@ -1,4 +1,4 @@
-package com.github.qingmei2.dsladapter
+package com.github.qingmei2.dslviewpager
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

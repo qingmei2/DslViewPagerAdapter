@@ -6,9 +6,9 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.github.qingmei2.databinding.ActivityMainBinding
-import com.github.qingmei2.dsladapter.DslFragmentPagerAdapter
-import com.github.qingmei2.dsladapter.build
-import com.github.qingmei2.dsladapter.buildAdapter
+import com.github.qingmei2.dslviewpager.DslFragmentPagerAdapter
+import com.github.qingmei2.dslviewpager.build
+import com.github.qingmei2.dslviewpager.buildAdapter
 import com.github.qingmei2.fragments.AFragment
 import com.github.qingmei2.fragments.BFragment
 import com.github.qingmei2.fragments.CFragment

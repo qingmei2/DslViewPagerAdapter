@@ -37,8 +37,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(path: ':dsladapter')
-    implementation project(path: ':dsladapter_databinding')
+    implementation project(path: ':adapter')
+    implementation project(path: ':adapter_databinding')
 
     // support
     implementation libs.support_v7

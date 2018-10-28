@@ -1,1 +1,1 @@
-include ':sample', ':dsladapter'
+include ':sample', ':dsladapter', ':dsladapter_databinding'

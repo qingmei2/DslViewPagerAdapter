@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.github.qingmei2.databinding.ActivityMainBinding
 import com.github.qingmei2.dsladapter.DslFragmentPagerAdapter
 import com.github.qingmei2.dsladapter.build
+import com.github.qingmei2.dsladapter.buildAdapter
 import com.github.qingmei2.fragments.AFragment
 import com.github.qingmei2.fragments.BFragment
 import com.github.qingmei2.fragments.CFragment
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     val adapter: DslFragmentPagerAdapter = DslFragmentPagerAdapter.build(
             fragmentManager = supportFragmentManager,
             fragmentsProvider = { fragments },
-            recycleFragment = { old, _ ->
+            recycle = { old, _ ->
                 when (old) {
                     is AFragment -> true
                     else -> false
@@ -37,6 +38,20 @@ class MainActivity : AppCompatActivity() {
                 .also {
                     it.activity = this
                 }
+
+        // usage exclude dataBinding:
+        viewPager.buildAdapter(
+                fragmentManager = supportFragmentManager,
+                currentItem = 0,
+                offscreenPageLimit = 1,
+                fragments = { fragments },
+                recycle = { old, _ ->
+                    when (old) {
+                        is AFragment -> true
+                        else -> false
+                    }
+                }
+        )
 
         btnChange.setOnClickListener {
             fragments = listOf(AFragment(), BFragment(), CFragment())   // new Fragment instance

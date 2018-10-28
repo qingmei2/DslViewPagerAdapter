@@ -14,7 +14,7 @@ fun ViewPager.buildAdapter(
         DslFragmentPagerAdapter.build(
                 fragmentManager = fragmentManager,
                 fragmentsProvider = fragments,
-                recycleFragment = recycle
+                recycle = recycle
         ).also {
             adapter = it
             this.currentItem = currentItem

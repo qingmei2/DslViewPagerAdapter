@@ -61,12 +61,12 @@ class DslFragmentPagerAdapter internal constructor(
 fun DslFragmentPagerAdapter.Companion.build(
         fragmentManager: FragmentManager,
         fragmentsProvider: () -> List<Fragment>,
-        recycleFragment: (old: Fragment, index: Int) -> Boolean = DEFAULT_RECYCLE_FUNC
+        recycle: (old: Fragment, index: Int) -> Boolean = DEFAULT_RECYCLE_FUNC
 ): DslFragmentPagerAdapter =
         DslFragmentPagerAdapter(
                 fragmentManager,
                 fragmentsProvider,
-                recycleFragment
+                recycle
         )
 
 val DEFAULT_RECYCLE_FUNC: (Fragment, Int) -> Boolean = { _, _ -> true }

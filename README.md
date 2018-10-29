@@ -1,10 +1,17 @@
 # DslViewPagerAdapter
 
-A simple and light FragmentViewPagerAdapter.
+A simple and lightweight ViewPagerAdapter for  `Fragment`.
 
 ## Usage
 
-### 1.usage of dataBinding.
+### 0.Add dependency snippet.
+
+```groovy
+implementation 'com.github.qingmei2.dslviewpager:adapter:0.1.0'
+implementation 'com.github.qingmei2.dslviewpager:adapter_databinding:0.1.0'
+```
+
+### 1.Usage of dataBinding.
 
 ```xml
 <android.support.v4.view.ViewPager
@@ -50,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-### 2.usage exclude dataBinding.
+### 2.Usage exclude dataBinding.
 
 ```kotlin
 viewPager.buildAdapter(
